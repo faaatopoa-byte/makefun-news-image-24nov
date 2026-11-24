@@ -13,14 +13,20 @@ ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "entry.png"
 
 
+def fallback_target() -> Path:
+    """Where the image goes when /output cannot be created or written."""
+    target = Path.cwd() / "output" / "entry.png"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    return target
+
+
 def write_entry() -> Path:
     out_dir = Path("/output")
     try:
         out_dir.mkdir(parents=True, exist_ok=True)
         target = out_dir / "entry.png"
     except OSError:
-        target = Path.cwd() / "output" / "entry.png"
-        target.parent.mkdir(parents=True, exist_ok=True)
+        target = fallback_target()
     shutil.copyfile(SOURCE, target)
     return target
 
